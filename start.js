@@ -1,56 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.dl = exports.dlMidia = void 0;
 const lib = require('./lib');
-const NodeID3 = require('node-id3').Promise;
+const ClassConfig = require('./constants.js');
 const { SoundCloud, YouTube, Spotify, Deezer } = require('./downloader');
-const classConfig = {
-	query: 'Quase - Banda 007',
-	format: 'mp3',
-	randomSelect: false,
-	localFile: false,
-	downloadFile: false,
-	limitSeconds: 0,
-	limitPlayList: 100,
-	limitSearch: 25, // Limite de pesquisa no Spotify [25]
-	clientId: '', // Token id [Spotify]
-	clientSecret: '', // Token secret [Spotify]
-	type: 'youtube' // soundcloud || spotify
-}
-class Downloader extends Map {
-	constructor(config = {}) {
-		super();
-		config = Object.assign(classConfig, config)
-		this.isConfig(config)
+
+class Downloader extends ClassConfig {
+	constructor(config) {
+		super(config);
 	}
 	
-	deezer(config = {}) {
+	deezer(config = this) {
 		return new Deezer(Object.assign(config, { classConfig: lib }))
 	};
 	
-	spotify(config = {}) {
+	spotify(config = this) {
 		return new Spotify(Object.assign(config, { classConfig: lib }))
 	};
 	
-	youtube(config = {}) {
+	youtube(config = this) {
 		return new YouTube(Object.assign(config, { classConfig: lib }))
 	};
 	
-	soundcloud(config = {}) {
+	soundcloud(config = this) {
 		return new SoundCloud(Object.assign(config, { classConfig: lib }))
 	};
 	
-	isConfig(config = {}) {
-		this.query = config.query || this.query || ''
-		this.format = config.format || this.format || 'mp3'
-		this.clientId = config.clientId || this.clientId || ''
-		this.clientSecret = config.clientSecret || this.clientSecret || ''
-		this.type = config.type || this.type || ''
-		this.dir = config.localFile || this.dir || ''
-		this.seconds = Number(config.limitSeconds || this.seconds) || 0
-		this.limitSearch = Number(config.limitSearch || this.limitSearch) || 0
-		this.limitPlayList = Number(config.limitPlayList || this.limitPlayList) || 0
-		this.downloadFile = Boolean(config.downloadFile || this.downloadFile)
-		this.randomSelect = Boolean(config.randomSelect || this.randomSelect);
+	isConfig(config) {
+		this._path(config);
 		return this
 	};
 	
@@ -115,12 +92,11 @@ class Downloader extends Map {
 	
 	async metadata(path, obj) {
 		let image = null
-		if (path.endsWith('.mp3')) { 
+		if (path.endsWith('.mp3')) {
+			const NodeID3 = require('node-id3').Promise;
 			await lib.download(obj.image, this.dir+(obj.videoId || obj.id)+'-img').then(v => {
 				image = v.file
-			}).catch(() => {
-				image = undefined
-			})
+			}).catch(() => { })
 			await NodeID3.write({
 				title: obj.title,
     			artist: obj.author.name,
@@ -136,7 +112,7 @@ class Downloader extends Map {
 		return Promise.resolve(obj)
 	};
 	
-	downloadZip() {
+	downloadZip(cb = function () {}) {
 		const Data = this.startClass()
 		if (!/Playlist/.test(this.typeQuery)) return Promise.reject('Apenas Playlist.');
 		
@@ -151,7 +127,13 @@ class Downloader extends Map {
 					query: v.url,
 					title: (name || title),
 					track: (i+1)+'/'+count
-				})
+				}).then(res => {
+					cb(res, null, { now: i+1, total: count })
+					return Promise.resolve(res)
+				}).catch(error => {
+					cb(null, error, { now: i+1, total: count })
+					return Promise.reject(error)
+				});
 			});
 			const downResult = await Promise.allSettled(downWait)
 			const success = downResult.filter(i => i.status == 'fulfilled').map(v => {
@@ -166,7 +148,7 @@ class Downloader extends Map {
 				}
 			})
 			const unsuccessfully = downResult.filter(i => i.status == 'rejected').map(v => v.reason)
-			if (!success.length) return Promise.reject('Sem mídia baixada.')
+			if (!success.length) return Promise.reject(unsuccessfully)
 			
 			const zip = await lib.zip(this.dir+title, success)
 			return Promise.resolve({
@@ -231,8 +213,7 @@ class Downloader extends Map {
 	};
 	
 	search(query = this.query) {
-		const Data = this.startClass()
-		Data.query = query || Data.query
+		const Data = this.startClass(query)
 		this.typeQuery = this.isType(Data.query)
 		return Data.get()
 	};
