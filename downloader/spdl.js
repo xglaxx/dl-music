@@ -19,8 +19,8 @@ exports.Spotify = class Spotify {
 		try {
 			const data = JSON.parse(this.read(Dir).toString('utf8'))
 			this._timestamp = data?.timestamp
-			this.token_type = data?.token
-			this.acess_token = data?.type
+			this.token_type = data?.type
+			this.acess_token = data?.token
 		} catch (error) {
 			//console.error('spotify-token.error:', error)
 		}
