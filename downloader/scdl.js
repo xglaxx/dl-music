@@ -1,14 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require('fs');
 const diretory = __dirname;
 const { Client, Util, keygen }= require("soundcloud-scraper"); // 5.0.3
 exports.SoundCloud = class SoundCloud extends Client {
-	constructor({ query, localFile, classConfig }) {
+	constructor({ query, classConfig }) {
 		super();
 		Object.assign(this, classConfig)
 		this.query = String(query)
-		this.dir = String(localFile);
 		this._token = this._timestamp = null
 	}
 	
@@ -54,7 +52,7 @@ exports.SoundCloud = class SoundCloud extends Client {
 	
 	async get(query = this.query) {
 		query = this.isUrl(query)[0] || query
-		if (/(on.)?soundcloud?.(app.goo.gl|com)/.test(query)) {
+		if (query.startsWith('https://')) {
 			query = await this.getOriginalUrl(query)
 		}
 		
