@@ -54,7 +54,7 @@ exports.SoundCloud = class SoundCloud extends Client {
 		query = this.isUrl(query)[0] || query
 		if (query.startsWith('https://')) {
 			query = await this.getOriginalUrl(query)
-			console.log({ query })
+			query = query.split('?ref=')[0]
 		}
 		
 		const User = this.isUrlScdl(query, 'user');
