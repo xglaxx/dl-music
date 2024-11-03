@@ -23,7 +23,7 @@ module.exports = class ClassConfig {
 		this.limitSearch = sh >= 1 ? sh : 1
 		this.clientId = c.id || c.clientId || this.clientId || '' // Token id [Spotify]
 		this.clientSecret = c.secret || c.clientSecret || this.clientSecret || '' // Token secret [Spotify]
-		this.type = /spotify|soundcloud|/.test(ty) ? ty : 'youtube'
+		this.type = /spotify|soundcloud/.test(ty) ? ty : 'youtube'
 	};
 	
 };
