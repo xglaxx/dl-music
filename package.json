@@ -1,0 +1,23 @@
+{
+	"name": "dl-music",
+	"version": "1.0.0",
+	"description": "Baixar vídeo/música do YouTube, mas também do Spotify e SoundCloud.",
+	"main": "index.js",
+	"author": "Crap / Ethern",
+	"repository": {
+		"url": "git@github.com:xglaxx/dl-music.git"
+	},
+	"keywords": [
+		"spotify-dl",
+		"youtube-dl",
+		"soundcloud-dl"
+	],
+	"dependencies": {
+		"node-id3": "^0.2.6",
+		"node-fetch": "2.6.1",
+		"request": "^2.88.2",
+		"file-type": "16.5.3",
+		"soundcloud-scraper": "^5.0.3",
+		"yt-search": "^2.11.0"
+	}
+}
