@@ -17,9 +17,9 @@ exports.SoundCloud = class SoundCloud extends Client {
 		url = url[0]
 		switch (type) {
 			case 'track':
-				return url.match(/^https?:\/\/(soundcloud\.com|snd\.sc)\/([A-Za-z0-9_-]+)\/([A-Za-z0-9_-]+)\/?$/)
+				return url.match(/^https?:\/\/(on\.|)(soundcloud\.com|snd\.sc)\/([A-Za-z0-9_-]+)\/([A-Za-z0-9_-]+)\/?$/)
 			case 'playlist':
-				return url.match(/^https?:\/\/(soundcloud\.com|snd\.sc)\/([A-Za-z0-9_-]+)\/sets\/([A-Za-z0-9_-]+)\/?$/)
+				return url.match(/^https?:\/\/(on\.|)(soundcloud\.com|snd\.sc)\/([A-Za-z0-9_-]+)\/sets\/([A-Za-z0-9_-]+)\/?$/)
 			case "artist":
 				return url.match(/^https?:\/\/(on\.|)(soundcloud\.com|snd\.sc)\/([A-Za-z0-9_-]+)\/?$/)
 			case 'user':
@@ -54,6 +54,7 @@ exports.SoundCloud = class SoundCloud extends Client {
 		query = this.isUrl(query)[0] || query
 		if (query.startsWith('https://')) {
 			query = await this.getOriginalUrl(query)
+			console.log({ query })
 		}
 		
 		const User = this.isUrlScdl(query, 'user');
