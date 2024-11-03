@@ -98,7 +98,7 @@ class Downloader extends Map {
 		
 		let classStart = this.youtube(this)
 		if (this.type === 'spotify') {
-			if (!(this.id && this.secret)) {
+			if (!(this.clientId && this.clientSecret)) {
 				throw new Error('Esta faltando ID e a SECRET token da Spotify, verifique o seu token no site oficial da Spotify DEV.')
 			}
 			classStart = this.spotify(this)
