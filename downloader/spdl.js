@@ -4,13 +4,13 @@ const diretory = __dirname;
 const BASE_URL = 'https://api.spotify.com/v1/';
 exports.Spotify = void 0;
 exports.Spotify = class Spotify {
-	constructor({ query, limitSearch, id, secret, classConfig }) {
+	constructor({ query, limitSearch, clientId, clientSecret, classConfig }) {
 		Object.assign(this, classConfig)
 		this.query = query || ''
 		this.limitSearch = typeof limitSearch === 'number' ? Math.min(limitSearch, 25) : 25
 		this._timestamp = this.acess_token = this.token_type = null
-		this._id = id || null
-		this._secret = secret || null
+		this._id = clientId || null
+		this._secret = clientSecret || null
 	}
 	
 	getToken() {
@@ -44,7 +44,7 @@ exports.Spotify = class Spotify {
 				type: this.token_type,
 				timestamp: this._timestamp
 			})
-			//console.log('spotify-token.update:', body)
+			console.log('spotify-token.update:', body)
 			return Promise.resolve(this._token)
 		}) : Promise.resolve(this._token)
     };

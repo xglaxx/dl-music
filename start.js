@@ -42,8 +42,8 @@ class Downloader extends Map {
 	isConfig(config = {}) {
 		this.query = config.query || this.query || ''
 		this.format = config.format || this.format || 'mp3'
-		this.id = config.clientId || this.id || ''
-		this.secret = config.clientSecret || this.secret || ''
+		this.clientId = config.clientId || this.clientId || ''
+		this.clientSecret = config.clientSecret || this.clientSecret || ''
 		this.type = config.type || this.type || ''
 		this.dir = config.localFile || this.dir || ''
 		this.seconds = Number(config.limitSeconds || this.seconds) || 0
