@@ -8,7 +8,7 @@ exports.Spotify = class Spotify {
 		Object.assign(this, classConfig)
 		this.query = query || ''
 		this.limitSearch = typeof limitSearch === 'number' ? Math.min(limitSearch, 25) : 25
-		this._timestamp = this.acess_token = this.token_type = null
+		this._timestamp = this.access_token = this.token_type = null
 		this._id = clientId || null
 		this._secret = clientSecret || null
 	}
@@ -37,16 +37,16 @@ exports.Spotify = class Spotify {
 			//form: { grant_type: 'authorization_code' }
 		}).then(body => {
 			this.token_type = body.token_type
-			this.acess_token = body.access_token
+			this.access_token = body.access_token
 			this._timestamp = Date.now()
 			this.write(Dir, {
-				token: this.acess_token,
+				token: this.access_token,
 				type: this.token_type,
 				timestamp: this._timestamp
 			})
 			console.log('spotify-token.update:', body)
-			return Promise.resolve(this._token)
-		}) : Promise.resolve(this._token)
+			return Promise.resolve(this.access_token)
+		}) : Promise.resolve(this.access_token)
     };
     
     get(query = this.query) {
@@ -62,7 +62,7 @@ exports.Spotify = class Spotify {
 		return this.getHTML(BASE_URL+'search?q='+encodeURIComponent(query)+'&type=album%2Cplaylist%2Cartist%2Ctrack&limit='+this.limitSearch, {
 			method: 'GET',
 			json: true,
-			headers: { 'Authorization': `Bearer ${this._token}` }
+			headers: { 'Authorization': `${this.token_type} ${this.access_token}` }
 		}).then(({ tracks, playlists, artists, albums }) => {
 			tracks = this.formatObject(tracks.items, 'track')
 			playlists = this.formatObject(playlists.items, 'playlist')
@@ -78,7 +78,7 @@ exports.Spotify = class Spotify {
 		} else {
 			await this.getToken()
 			return this.fetch(BASE_URL+'me', {
-				headers: { 'Authorization': `Bearer ${this._token}` }
+				headers: { 'Authorization': `${this.token_type} ${this.access_token}` }
 			}).then(v => v.json()).then(v => this.formatObject(v, 'user'))
 		}
 	};
@@ -102,7 +102,7 @@ exports.Spotify = class Spotify {
 		return this.getHTML(BASE_URL+type+id, {
 			method: 'GET',
 			json: true,
-			headers: { 'Authorization': `Bearer ${this._token}` }
+			headers: { 'Authorization': `${this.token_type} ${this.access_token}` }
 		}).then(v => {
 			let data = v
 			if (/playlist|album/.test(v.type)) {
