@@ -16,7 +16,7 @@ module.exports = class ClassConfig {
 		this.query = c.query || c.pesquisar || c.url || this.query || 'Quase - Banda 007'
 		this.format = /mp3|mp4/.test(fm) ? fm : 'mp3'
 		this.randomSelect = Boolean(c.randomSelect || c.random || this.randomSelect)
-		this.dir = c.localFile || c.dir || || this.dir || ''
+		this.dir = c.localFile || c.dir || this.dir || ''
 		this.downloadFile = Boolean(c.downloadFile || this.downloadFile)
 		this.seconds = Number(c.limitSeconds || c.maxSeconds || this.seconds || 0)
 		this.limitPlayList = py >= 1 ? py : 100
