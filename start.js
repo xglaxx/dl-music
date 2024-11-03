@@ -12,8 +12,8 @@ const classConfig = {
 	limitSeconds: 0,
 	limitPlayList: 100,
 	limitSearch: 25, // Limite de pesquisa no Spotify [25]
-	id: '', // Token id [Spotify]
-	secret: '', // Token secret [Spotify]
+	clientId: '', // Token id [Spotify]
+	clientSecret: '', // Token secret [Spotify]
 	type: 'youtube' // soundcloud || spotify
 }
 class Downloader extends Map {
@@ -42,8 +42,8 @@ class Downloader extends Map {
 	isConfig(config = {}) {
 		this.query = config.query || this.query || ''
 		this.format = config.format || this.format || 'mp3'
-		this.id = config.id || this.id || ''
-		this.secret = config.secret || this.secret || ''
+		this.id = config.clientId || this.id || ''
+		this.secret = config.clientSecret || this.secret || ''
 		this.type = config.type || this.type || ''
 		this.dir = config.localFile || this.dir || ''
 		this.seconds = Number(config.limitSeconds || this.seconds) || 0
@@ -93,7 +93,7 @@ class Downloader extends Map {
 				throw new Error('Error, nenhum tipo(Youtube/Spotify/SoundCloud) foi encontrado.')
 			}
 		} else {
-			type = /SoundCloud/.test(this.typeQuery) ? 'soundcloud' : /Spotify/.test(this.typeQuery) ? 'spotify' : 'youtube'
+			this.type = /SoundCloud/.test(this.typeQuery) ? 'soundcloud' : /Spotify/.test(this.typeQuery) ? 'spotify' : 'youtube'
 		}
 		
 		let classStart = this.youtube(this)

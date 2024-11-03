@@ -8,7 +8,7 @@ exports.Spotify = class Spotify {
 		Object.assign(this, classConfig)
 		this.query = query || ''
 		this.limitSearch = typeof limitSearch === 'number' ? Math.min(limitSearch, 25) : 25
-		this._timestamp = this._token = null
+		this._timestamp = this.acess_token = this.token_type = null
 		this._id = id || null
 		this._secret = secret || null
 	}
@@ -18,26 +18,33 @@ exports.Spotify = class Spotify {
 		if (!(this._id && this._secret)) return Promise.reject('Sem token!')
 		try {
 			const data = JSON.parse(this.read(Dir).toString('utf8'))
-			this._token = data?.token
 			this._timestamp = data?.timestamp
+			this.token_type = data?.token
+			this.acess_token = data?.type
 		} catch (error) {
-			console.error('spotify-token.error:', error)
+			//console.error('spotify-token.error:', error)
 		}
 		
 		const date = Date.now() - Number(this._timestamp)
 		const encode = new Buffer.from(`${this._id}:${this._secret}`).toString("base64")
         return date >= (1000 * 60 * 60) ? this.getInfoUrlPost("https://accounts.spotify.com/api/token", {
 			json: true,
-			headers: { 'Authorization': 'Basic ' + encode },
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Authorization': 'Basic ' + encode
+			},
 			form: { grant_type: 'client_credentials' }
+			//form: { grant_type: 'authorization_code' }
 		}).then(body => {
-			this._token = body.access_token
+			this.token_type = body.token_type
+			this.acess_token = body.access_token
 			this._timestamp = Date.now()
 			this.write(Dir, {
-				token: this._token,
+				token: this.acess_token,
+				type: this.token_type,
 				timestamp: this._timestamp
 			})
-			console.log('spotify-token.update:', body)
+			//console.log('spotify-token.update:', body)
 			return Promise.resolve(this._token)
 		}) : Promise.resolve(this._token)
     };
